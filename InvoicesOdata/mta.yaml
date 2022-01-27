@@ -1,0 +1,92 @@
+_schema-version: "3.2"
+ID: InvoicesOdata
+version: 0.0.1
+modules:
+- name: InvoicesOdata-destination-content
+  type: com.sap.application.content
+  requires:
+  - name: InvoicesOdata-destination-service
+    parameters:
+      content-target: true
+  - name: InvoicesOdata_html_repo_host
+    parameters:
+      service-key:
+        name: InvoicesOdata_html_repo_host-key
+  - name: uaa_InvoicesOdata
+    parameters:
+      service-key:
+        name: uaa_InvoicesOdata-key
+  parameters:
+    content:
+      instance:
+        destinations:
+        - Name: invoices_InvoicesOdata_html_repo_host
+          ServiceInstanceName: InvoicesOdata-html5-app-host-service
+          ServiceKeyName: InvoicesOdata_html_repo_host-key
+          sap.cloud.service: invoices
+        - Authentication: OAuth2UserTokenExchange
+          Name: invoices_uaa_InvoicesOdata
+          ServiceInstanceName: InvoicesOdata-xsuaa-service
+          ServiceKeyName: uaa_InvoicesOdata-key
+          sap.cloud.service: invoices
+        existing_destinations_policy: ignore
+  build-parameters:
+    no-source: true
+- name: InvoicesOdata-app-content
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: InvoicesOdata_html_repo_host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - logaligroupsapui5.zip
+      name: logaligroupsapui5
+      target-path: resources/
+- name: logaligroupsapui5
+  type: html5
+  path: sapui5
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+resources:
+- name: InvoicesOdata-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: true
+      init_data:
+        instance:
+          destinations:
+          - Authentication: NoAuthentication
+            Name: ui5
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://ui5.sap.com
+          existing_destinations_policy: update
+      version: 1.0.0
+    service: destination
+    service-name: InvoicesOdata-destination-service
+    service-plan: lite
+- name: InvoicesOdata_html_repo_host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: InvoicesOdata-html5-app-host-service
+    service-plan: app-host
+- name: uaa_InvoicesOdata
+  type: org.cloudfoundry.managed-service
+  parameters:
+    path: ./xs-security.json
+    service: xsuaa
+    service-name: InvoicesOdata-xsuaa-service
+    service-plan: application
+parameters:
+  deploy_mode: html5-repo

@@ -20,7 +20,7 @@
         }
       },
       "Northwind.svc": {
-        "uri": "Northwind/V2/Northwind/Northwind.svc/",
+        "uri": "/V2/Northwind/Northwind.svc/",
         "type": "OData",
         "settings": {
           "odataVersion": "2.0",
@@ -76,7 +76,7 @@
         "type": "sap.ui.model.json.JSONModel",
         "uri": "Invoices.json"
       },
-      "": {
+      "northwind": {
         "dataSource": "Northwind.svc",
         "preload": true,
         "settings": {
@@ -106,19 +106,33 @@
       "routes": [
         {
           "name": "RouteApp",
-          "pattern": "RouteApp",
+          "pattern": "",
           "target": [
-            "TargetApp"
+            "TargetOverview"
           ]
+        },
+        {
+            "name": "Details",
+            "pattern": "details",
+            "target": [
+              "TargetDetails"
+            ]
         }
       ],
       "targets": {
-        "TargetApp": {
+        "TargetOverview": {
           "viewType": "XML",
           "transition": "slide",
           "clearControlAggregation": false,
-          "viewId": "App",
-          "viewName": "App"
+          "viewId": "Overview",
+          "viewName": "Overview"
+        },
+        "TargetDetails":{
+            "viewType": "XML",
+            "transition": "slide",
+            "clearControlAggregation": false,
+            "viewId": "Details",
+            "viewName": "Details"
         }
       }
     }

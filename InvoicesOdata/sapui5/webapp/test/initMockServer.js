@@ -16,7 +16,7 @@ sap.ui.define([
     Promise.all(aMockServers).catch( function (oError) {
         MessageBox.error(oError.message);
     } ).finally( function () {
-        sap.ui.require(["module:sap/ui/core/ComponentSupport"]);
+        sap.ui.require(["sap/ui/core/ComponentSupport"]);
     } );
 
 }); 
